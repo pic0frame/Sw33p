@@ -3,6 +3,7 @@
 import os
 import sys
 import socket
+import codecs
 import subprocess
 
 # Check for root
@@ -23,12 +24,20 @@ except:
 sweeper = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
 sweeper.bind((interface, 0x003)) # Bind socket to interface
 
-# Header length value is stored on the 5:9 byte or 2:4 hex
-def check_header_length(packet):
-    header = str(packet[2:4].hex()).rstrip('0')
-    byte = 8 * len(header)
-    length = int(header, byte)
-    return length
+def decode_length( p, s, e ):
+    item = str(p[s:e].hex()).rstrip('0')
+    byte = 8 * len(item)
+    item = int(item, byte)
+    return item
+
+def decode_lengthx1( p, s ):
+    a = str(p[s])
+    item = codecs.decode(str(a), 'hex')
+    item = str(item.hex())
+    print(item)
+    # byte = 8 * len(item)
+    # item = int(item, byte)
+    return item
 
 # sw33p
 i = 0
@@ -39,6 +48,10 @@ while True:
         print('Scanning channel {} ...'.format(channel))
         packet = sweeper.recvfrom(2048)[0]
     # Check if packet is an beacon_frame
-        if packet[check_header_length(packet)] == 128:
+        if packet[decode_length(packet, 2, 4)] == 128:
             i = i + 1
-            print('{}: Found beacon_frame with header_length of {} \n'.format(i, check_header_length(packet)))
+            print('{}: Found beacon_frame with header_length of {}'.format(i, decode_length(packet, 2, 4)))
+            print(decode_lengthx1(packet, 74))
+            #a = packet[74]
+            #print(codecs.decode(str(a), 'hex'))
+
