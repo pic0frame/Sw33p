@@ -2,9 +2,13 @@
 
 import os
 import sys
+import re
+import queue
 import socket
 import codecs
+import threading
 import subprocess
+
 
 # Check for root
 if os.geteuid() != 0:
@@ -24,19 +28,13 @@ except:
 sweeper = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
 sweeper.bind((interface, 0x003)) # Bind socket to interface
 
-def decode_length( p, s, e):
-    a = p[s:e]
-    if type(a) == bytes:
-        a = a.hex()
-        if not a == '10':
-            a = a.rstrip('0')
-        byte = 8 * len(a)
-        a = int(a, byte)
-    else:
-        a = codecs.decode(a, 'hex')
-        byte = 8 * len(a)
-        a = int(a, byte)
-    return a
+# Decode length byte
+def decode_length( pkt, start, end):
+    item = pkt[start:end].hex()
+    if not item == '10':
+        item = item.rstrip('0')
+    item = int(item, 8 * len(item))
+    return item
 
 # sw33p
 i = 0
@@ -49,4 +47,8 @@ while True:
         if packet[decode_length(packet, 2, 4)] == 128:
             i = i + 1
             SSID = packet[76:(76 + decode_length(packet, 75, 76))].decode()
-            print('{}: ===> {} :  Found beacon_frame with header_length of "{}" on channel: "{}"'.format(i, SSID, decode_length(packet, 2, 4), channel))
+            MAC = ':'.join(re.findall('.{1,2}', packet[48:55].hex()))
+            
+            print('{}: \t {} \t\t\t {} \t\t\t {}'.format(i, SSID, MAC, channel))
+
+# table print
