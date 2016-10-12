@@ -44,9 +44,9 @@ def channel_swap():
     while True:
         for channel in range(1, 14):
             subprocess.run(['iwconfig', interface, 'channel', str(channel)])
-            time.sleep(float(0.4))
-            channel = channel
-            return 1
+           # time.sleep(float(0.4))
+            #channel = channel
+            #return 1
 
 def rest():
     # Check if packet is an beacon_frame
@@ -65,7 +65,7 @@ def rest():
             i = i+1
             print('Count: {} | {}'.format(i, str(SSID)))
             print('\t MAC: {}'.format(str(MAC).upper()))
-            time.sleep(float(0.5))
+            #time.sleep(float(0.5))
             #print('\t CH : {}\n'.format(decode_length(packet, 112, 113)))
 
 # Thread setup
