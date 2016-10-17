@@ -29,7 +29,7 @@ def channel_swap():
    # time.sleep(2)
     while True:
         for channel in range(1, 14):
-            #time.sleep(0.1)
+            time.sleep(0.3)
             subprocess.run(['iwconfig', interface, 'channel', str(channel)])
 
 # Socket setup
