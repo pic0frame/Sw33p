@@ -24,7 +24,7 @@ except:
 
 # Change channels
 def channel_swap():
-   # time.sleep(2)
+    # time.sleep(2)
     while True:
         for channel in range(1, 14):
             time.sleep(0.3)
@@ -32,7 +32,9 @@ def channel_swap():
 
 # Socket setup
 sweeper = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.htons(0x0003))
-sweeper.bind((interface, 0x0003)) # Bind socket to interface
+# Bind socket to interface
+sweeper.bind((interface, 0x0003))
+
 
 # This is the main function. It will grab a packet and decode it's headers
 def sw33p():
